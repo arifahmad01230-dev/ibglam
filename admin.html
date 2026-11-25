@@ -113,7 +113,7 @@ if(!em||!pw)return say("le","Enter your email and password.");
 $("lb").disabled=true;
 fetch(BASE+"/auth/v1/token?grant_type=password",{method:"POST",headers:{"Content-Type":"application/json",apikey:KEY},body:JSON.stringify({email:em,password:pw})})
 .then(function(r){return r.json().then(function(d){return{ok:r.ok,d:d}})}).then(function(r){
-if(!r.ok||!r.d.access_token)return say("le","Wrong email or password.");
+if(!r.ok||!r.d.access_token){var ec=r.d.error_code||"";return say("le",ec==="email_not_confirmed"?"Your email is not confirmed yet. Confirm it in Supabase (Authentication, Users), then try again.":ec==="invalid_credentials"?"Wrong email or password.":"Sign in failed: "+(ec||r.d.msg||r.d.error_description||"unknown error")+".")}
 token=r.d.access_token;try{sessionStorage.setItem("ibg_t",token)}catch(e){}$("pw").value="";return load()})
 .catch(function(){say("le","Could not reach the server.")}).then(function(){$("lb").disabled=false})});
 $("t-orders").onclick=function(){tab="orders";$("flt").value="";render()};
